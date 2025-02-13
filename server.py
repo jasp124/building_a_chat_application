@@ -7,7 +7,7 @@ class ChatServer:
     def __init__(self, host, port):
         self.host = host
         self.port = port
-        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.clients = {} #username: socket
         self.user_manager = UserManager
         self.user_credentials = {
