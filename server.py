@@ -1,6 +1,7 @@
 import socket
 import threading
 import ssl
+import bcrypt
 
 class ChatServer:
     def __init__(self, host, port):
@@ -92,6 +93,24 @@ class ChatServer:
             del self.clients[username]
             self.broadcast_message(f"SYSTEM|Server|ALL|[{username}|has left the chat.")
 
-    if __name__ == "__main__":
-        server = ChatServer('localhost', 12345)
-        server.start()
+
+
+class UserManager:
+    def __init__(self):
+        self.users = {}#username: hashed_password
+
+    def creat_user(self, username, password):
+        if username in self.users:
+            return False
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        self.users[username] = hashed_password
+        return True
+    
+    def authenticate_user(self, username, password):
+        if username not in self.users:
+            return False
+        return bcrypt.checkpw(password.encode('utf-8'), self.users[username])
+
+if __name__ == "__main__":
+    server = ChatServer('localhost', 12345)
+    server.start()
