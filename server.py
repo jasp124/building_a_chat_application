@@ -9,6 +9,7 @@ class ChatServer:
         self.port = port
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.clients = {} #username: socket
+        self.user_manager = UserManager
         self.user_credentials = {
             "alice": "Passwords123",
             "bob": "sercurepass",
@@ -58,7 +59,7 @@ class ChatServer:
         client_socket.send("Please enter your password:".encode('utf-8'))
         password = client_socket.recv(1024).decode('utf-8').strip()
 
-        if username in self.user_credentials and self.user_credentials[username] == password:
+        if self.user_manager.authenticate_user(username,password):
             client_socket.send('Authentication successful'.encode('utf-8'))
             return username
         else:
@@ -92,6 +93,8 @@ class ChatServer:
         if username in self.clients:
             del self.clients[username]
             self.broadcast_message(f"SYSTEM|Server|ALL|[{username}|has left the chat.")
+    
+    
 
 
 
